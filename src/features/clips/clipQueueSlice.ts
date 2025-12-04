@@ -319,6 +319,19 @@ const clipQueueSlice = createSlice({
 const selectByIds = (state: RootState) => state.clipQueue.byId;
 
 export const selectQueueIds = (state: RootState) => state.clipQueue.queueIds;
+
+export const selectQueueIdsSortedByAuthor = createSelector(
+  [selectByIds, selectQueueIds],
+  (byIds, queueIds) => {
+    return [...queueIds].sort((a, b) => {
+      const clipA = byIds[a];
+      const clipB = byIds[b];
+      const authorA = clipA?.author?.toLowerCase() || '';
+      const authorB = clipB?.author?.toLowerCase() || '';
+      return authorA.localeCompare(authorB);
+    });
+  }
+);
 export const selectCurrentId = (state: RootState) => state.clipQueue.currentId;
 export const selectHistoryIds = (state: RootState) => state.clipQueue.historyIds;
 export const selectWatchedCount = (state: RootState) => state.clipQueue.watchedClipCount;
