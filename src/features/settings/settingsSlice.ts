@@ -13,7 +13,6 @@ interface SettingsState {
   volume: number | undefined;
   ignoredChatters: string[];
   initialQueueOpen: boolean;
-
 }
 
 const initialState: SettingsState = {
@@ -21,8 +20,7 @@ const initialState: SettingsState = {
   commandPrefix: '!queue',
   volume: 1,
   ignoredChatters: ['streamlabs', 'nightbot', 'streamelements', 'fossabot', 'moobot', 'sery_bot', 'wizebot', 'kofistreambot'],
-  initialQueueOpen: false,
-
+  initialQueueOpen: false
 };
 
 const settingsSlice = createSlice({
