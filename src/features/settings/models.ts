@@ -12,4 +12,5 @@ export interface AllSettings {
   clipLimit?: number | null;
   layout?: string;
   initialQueueOpen?: 'true' | 'false';
+  isSorted?: boolean;
 }

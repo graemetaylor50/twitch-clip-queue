@@ -32,6 +32,7 @@ interface ClipQueueState {
   watchedClipCount: number;
 
   isOpen: boolean;
+  isSorted: boolean
 
   autoplay: boolean;
   autoplayDelay: number;
@@ -52,6 +53,7 @@ const initialState: ClipQueueState = {
   providers: ['twitch-clip', 'twitch-vod', 'youtube'],
   layout: 'classic',
   isOpen: false,
+  isSorted: false,
   autoplay: false,
   autoplayDelay: 5000,
   watchedHistory: [],
@@ -298,6 +300,9 @@ const clipQueueSlice = createSlice({
       if (payload.layout) {
         state.layout = payload.layout;
       }
+       if (payload.isSorted !== undefined) {
+        state.isSorted = payload.isSorted;
+      }
     });
     builder.addCase(legacyDataMigrated, (state, { payload }) => {
       state.watchedClipCount = 0;
@@ -319,6 +324,20 @@ const clipQueueSlice = createSlice({
 const selectByIds = (state: RootState) => state.clipQueue.byId;
 
 export const selectQueueIds = (state: RootState) => state.clipQueue.queueIds;
+
+export const selectQueueIdsSortedByAuthor = createSelector(
+  [selectByIds, selectQueueIds],
+  (byIds, queueIds) => {
+    return [...queueIds].sort((a, b) => {
+      const clipA = byIds[a];
+      const clipB = byIds[b];
+      const authorA = clipA?.author?.toLowerCase() || '';
+      const authorB = clipB?.author?.toLowerCase() || '';
+      return authorA.localeCompare(authorB);
+    });
+  }
+);
+
 export const selectCurrentId = (state: RootState) => state.clipQueue.currentId;
 export const selectHistoryIds = (state: RootState) => state.clipQueue.historyIds;
 export const selectWatchedCount = (state: RootState) => state.clipQueue.watchedClipCount;
@@ -331,6 +350,7 @@ export const selectAutoplayTimeoutHandle = (state: RootState) => state.clipQueue
 export const selectAutoplayDelay = (state: RootState) => state.clipQueue.autoplayDelay;
 export const selectAutoplayUrl = (state: RootState) => state.clipQueue.autoplayUrl;
 export const selectClipById = (id: string) => (state: RootState) => state.clipQueue.byId[id];
+export const selectIsSorted = (state: RootState) => state.clipQueue.isSorted;
 export const selectNextId = createSelector([selectQueueIds], (queueIds) => queueIds[0]);
 export const selectCurrentClip = createSelector([selectByIds, selectCurrentId], (byIds, id) =>
   id ? byIds[id] : undefined

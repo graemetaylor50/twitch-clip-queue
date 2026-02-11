@@ -1,15 +1,16 @@
-import { Menu, Badge, NumberInput, Button, Stack } from '@mantine/core';
+import { Menu, Badge, NumberInput, Button, Stack, Switch } from '@mantine/core';
 import { useModals } from '@mantine/modals';
 import { FormEvent, useState } from 'react';
-import { TrashX, Tallymarks } from 'tabler-icons-react';
+import { TrashX, Tallymarks, ArrowsSort } from 'tabler-icons-react';
 import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { settingsChanged } from '../../settings/settingsSlice';
-import { queueCleared, selectClipLimit } from '../clipQueueSlice';
+import { queueCleared, selectClipLimit, selectIsSorted } from '../clipQueueSlice';
 
 function ClipLimitModal({ onSubmit }: { onSubmit: () => void }) {
   const dispatch = useAppDispatch();
   const clipLimit = useAppSelector(selectClipLimit);
   const [value, setValue] = useState(clipLimit);
+  
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
     dispatch(settingsChanged({ clipLimit: value || null }));
@@ -46,6 +47,7 @@ function QueueQuickMenu() {
   const modals = useModals();
   const dispatch = useAppDispatch();
   const clipLimit = useAppSelector(selectClipLimit);
+  const isSorted = useAppSelector(selectIsSorted);
 
   const openClipLimitModal = () => {
     const id = modals.openModal({
@@ -53,6 +55,18 @@ function QueueQuickMenu() {
       children: <ClipLimitModal onSubmit={() => modals.closeModal(id)} />,
     });
   };
+
+  const toggleIsSorted = () => {
+    if(isSorted === true){
+      
+      dispatch(settingsChanged({ isSorted: false  }));
+    }
+    else{
+      dispatch(settingsChanged({ isSorted: true  }));
+    }
+  }
+
+
 
   return (
     <>
@@ -63,6 +77,13 @@ function QueueQuickMenu() {
           onClick={() => openClipLimitModal()}
         >
           Set queue limit
+        </Menu.Item>
+        <Menu.Item
+          icon={<ArrowsSort size={14} />}
+          rightSection={<Switch size="xs" checked={isSorted === true} readOnly />}
+          onClick={() => toggleIsSorted()}
+        >
+          Sort by Streamer
         </Menu.Item>
         <Menu.Item icon={<TrashX size={14} />} color="red" onClick={() => dispatch(queueCleared())}>
           Clear queue
