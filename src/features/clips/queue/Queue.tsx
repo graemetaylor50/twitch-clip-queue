@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../../../app/hooks';
 import { selectQueueIds, currentClipReplaced, queueClipRemoved, selectClipById, selectIsSorted } from '../clipQueueSlice';
 import Clip from '../Clip';
 import { useMemo } from 'react';
-import { createStyles, Box } from '@mantine/core';
+import { createStyles } from '@mantine/core';
 
 interface QueueProps {
   card?: boolean;
@@ -18,7 +18,9 @@ const useStyles = createStyles((theme) => ({
     },
   },
   content: {
-    padding: theme.spacing.md,
+    display: 'grid',
+    gap: theme.spacing.sm,
+    padding: theme.spacing.sm,
     paddingTop: 0,
   },
   item: {
@@ -91,13 +93,14 @@ function Queue({ wrapper, card }: QueueProps) {
             </div>
             <div className={classes.content}>
               {clips.map((clip) => (
-                <Wrapper key={clip.id}>
+                <Wrapper key={clip!.id}>
                   <Clip
-                    platform={clip.Platform || undefined}
-                    clipId={clip.id}
+                    platform={clip!.Platform || undefined}
+                    key={clip!.id}
+                    clipId={clip!.id}
                     card={card}
-                    onClick={() => dispatch(currentClipReplaced(clip.id))}
-                    onCrossClick={() => dispatch(queueClipRemoved(clip.id))}
+                    onClick={() => dispatch(currentClipReplaced(clip!.id))}
+                    onCrossClick={() => dispatch(queueClipRemoved(clip!.id))}
                   />
                 </Wrapper>
               ))}
